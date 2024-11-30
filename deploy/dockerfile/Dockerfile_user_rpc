@@ -1,4 +1,25 @@
-FROM ubuntu:latest
-LABEL authors="wangyan"
+# 使用官方的 Go 镜像作为基础镜像
+FROM golang:1.23-alpine AS builder
 
-ENTRYPOINT ["top", "-b"]
+# 设置工作目录
+WORKDIR /build
+
+ADD go.mod .
+ADD go.sum .
+# 将本地代码复制到容器中
+COPY ./apps/user/rpc/ .
+
+# 构建 Go 应用程序
+RUN go build -o main ./user.go
+
+# 使用一个更小的基础镜像来减小最终镜像的大小
+FROM alpine:latest
+
+# 设置工作目录
+WORKDIR /root/
+
+# 从构建阶段复制可执行文件到最终镜像
+COPY --from=builder /build/main .
+
+# 定义容器启动时运行的命令
+CMD ["./main"]

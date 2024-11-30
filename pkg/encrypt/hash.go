@@ -1,8 +1,3 @@
-/**
- * @author: dn-jinmin/dn-jinmin
- * @doc:
- */
-
 package encrypt
 
 import (
@@ -17,12 +12,10 @@ func Md5(str []byte) string {
 	return hex.EncodeToString(h.Sum(nil))
 }
 
-// hash加密
 func GenPasswordHash(password []byte) ([]byte, error) {
 	return bcrypt.GenerateFromPassword(password, bcrypt.DefaultCost)
 }
 
-// hash校验
 func ValidatePasswordHash(password string, hashed string) bool {
 	if err := bcrypt.CompareHashAndPassword([]byte(hashed), []byte(password)); err != nil {
 		return false
